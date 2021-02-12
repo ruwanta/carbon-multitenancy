@@ -24,7 +24,7 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.context.RegistryType;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.utils.UUIDGenerator;
-import org.wso2.carbon.stratos.common.beans.TenantInfoBean;
+import org.wso2.carbon.tenant.mgt.beans.TenantInfoBean;
 import org.wso2.carbon.stratos.common.constants.TenantConstants;
 import org.wso2.carbon.stratos.common.exception.StratosException;
 import org.wso2.carbon.stratos.common.exception.TenantManagementClientException;

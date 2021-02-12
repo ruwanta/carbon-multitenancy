@@ -33,7 +33,7 @@ import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.jdbc.dataaccess.JDBCDataAccessManager;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.utils.UUIDGenerator;
-import org.wso2.carbon.stratos.common.beans.TenantInfoBean;
+import org.wso2.carbon.tenant.mgt.beans.TenantInfoBean;
 import org.wso2.carbon.stratos.common.constants.StratosConstants;
 import org.wso2.carbon.stratos.common.exception.StratosException;
 import org.wso2.carbon.stratos.common.exception.TenantManagementClientException;
@@ -42,6 +42,7 @@ import org.wso2.carbon.stratos.common.exception.TenantMgtException;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.stratos.common.util.ClaimsMgtUtil;
 import org.wso2.carbon.stratos.common.util.CommonUtil;
+import org.wso2.carbon.tenant.mgt.exception.TenantManagementException;
 import org.wso2.carbon.tenant.mgt.internal.TenantMgtServiceComponent;
 import org.wso2.carbon.tenant.mgt.message.TenantDeleteClusterMessage;
 import org.wso2.carbon.user.api.RealmConfiguration;
@@ -143,11 +144,15 @@ public class TenantMgtUtil {
      * @param tenantInfo tenant
      * @throws StratosException, trigger failed
      */
-    public static void triggerAddTenant(TenantInfoBean tenantInfo) throws StratosException {
+    public static void triggerAddTenant(TenantInfoBean tenantInfo) throws TenantManagementException {
         // initializeRegistry(tenantInfoBean.getTenantId());
         for (TenantMgtListener tenantMgtListener :
                 TenantMgtServiceComponent.getTenantMgtListeners()) {
-            tenantMgtListener.onTenantCreate(tenantInfo);
+            try {
+                tenantMgtListener.onTenantCreate(tenantInfo);
+            } catch (StratosException e) {
+                throw new TenantManagementException("Error in calling tenant management listener", e);
+            }
         }
     }
 
@@ -158,12 +163,16 @@ public class TenantMgtUtil {
      * @throws StratosException , trigger failed
      */
     public static void triggerPreTenantDelete(int tenantId)
-            throws StratosException {
+            throws TenantManagementException {
         for (TenantMgtListener tenantMgtListener : TenantMgtServiceComponent
                 .getTenantMgtListeners()) {
             log.debug("Executing OnPreDelete on Listener Impl Class Name : "
                       + tenantMgtListener.getClass().getName());
-            tenantMgtListener.onPreDelete(tenantId);
+            try {
+                tenantMgtListener.onPreDelete(tenantId);
+            } catch (StratosException e) {
+                throw new TenantManagementException("Error in calling tenant management listener", e);
+            }
         }
     }
 
@@ -174,10 +183,14 @@ public class TenantMgtUtil {
      * @throws org.wso2.carbon.stratos.common.exception.StratosException, if update failed
      */
     public static void triggerUpdateTenant(
-            TenantInfoBean tenantInfoBean) throws StratosException {
+            TenantInfoBean tenantInfoBean) throws TenantManagementException {
         for (TenantMgtListener tenantMgtListener :
                 TenantMgtServiceComponent.getTenantMgtListeners()) {
-            tenantMgtListener.onTenantUpdate(tenantInfoBean);
+            try {
+                tenantMgtListener.onTenantUpdate(tenantInfoBean);
+            } catch (StratosException e) {
+                throw new TenantManagementException("Error in calling tenant management listener", e);
+            }
         }
     }
     
@@ -189,17 +202,25 @@ public class TenantMgtUtil {
         }
     }
     
-    public static void triggerTenantActivation(int tenantId) throws StratosException {
+    public static void triggerTenantActivation(int tenantId) throws TenantManagementException {
         for (TenantMgtListener tenantMgtListener : 
                 TenantMgtServiceComponent.getTenantMgtListeners()) {
-            tenantMgtListener.onTenantActivation(tenantId);
+            try {
+                tenantMgtListener.onTenantActivation(tenantId);
+            } catch (StratosException e) {
+                throw new TenantManagementException("Error in calling tenant management listener", e);
+            }
         }
     }
     
-    public static void triggerTenantDeactivation(int tenantId) throws StratosException {
+    public static void triggerTenantDeactivation(int tenantId) throws TenantManagementException {
         for (TenantMgtListener tenantMgtListener :
                 TenantMgtServiceComponent.getTenantMgtListeners()) {
-            tenantMgtListener.onTenantDeactivation(tenantId);
+            try {
+                tenantMgtListener.onTenantDeactivation(tenantId);
+            } catch (StratosException e) {
+                throw new TenantManagementException("Error in calling tenant management listener", e);
+            }
         }
     }
 

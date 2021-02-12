@@ -23,12 +23,11 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.registry.core.utils.UUIDGenerator;
-import org.wso2.carbon.stratos.common.beans.TenantInfoBean;
-import org.wso2.carbon.stratos.common.exception.StratosException;
+import org.wso2.carbon.tenant.mgt.beans.TenantInfoBean;
 import org.wso2.carbon.stratos.common.util.ClaimsMgtUtil;
-import org.wso2.carbon.stratos.common.util.CommonUtil;
 import org.wso2.carbon.tenant.mgt.beans.PaginatedTenantInfoBean;
 import org.wso2.carbon.tenant.mgt.core.TenantPersistor;
+import org.wso2.carbon.tenant.mgt.exception.TenantManagementException;
 import org.wso2.carbon.tenant.mgt.internal.TenantMgtServiceComponent;
 import org.wso2.carbon.tenant.mgt.util.TenantMgtUtil;
 import org.wso2.carbon.user.core.UserRealm;
@@ -147,7 +146,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
         //Notify tenant addition
         try {
             TenantMgtUtil.triggerAddTenant(tenantInfoBean);
-        } catch (StratosException e) {
+        } catch (TenantManagementException e) {
             String msg = "Error in notifying tenant addition.";
             log.error(msg, e);
             throw new Exception(msg, e);
@@ -163,7 +162,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
     private void notifyTenantDeletion(int tenantId) throws Exception {
         try {
             TenantMgtUtil.triggerPreTenantDelete(tenantId);
-        } catch (StratosException e) {
+        } catch (TenantManagementException e) {
             String msg = "Error in notifying tenant addition.";
             log.error(msg, e);
             throw new Exception(msg, e);
@@ -503,7 +502,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
         //Notify tenant update to all listeners
         try {
             TenantMgtUtil.triggerUpdateTenant(tenantInfoBean);
-        } catch (StratosException e) {
+        } catch (TenantManagementException e) {
             String msg = "Error in notifying tenant update.";
             log.error(msg, e);
             throw new Exception(msg, e);
@@ -548,7 +547,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
         //Notify tenant activation all listeners
         try {
             TenantMgtUtil.triggerTenantActivation(tenantId);
-        } catch (StratosException e) {
+        } catch (TenantManagementException e) {
             String msg = "Error in notifying tenant activate.";
             log.error(msg, e);
             throw new Exception(msg, e);
@@ -583,7 +582,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
         //Notify tenant deactivation all listeners
         try {
             TenantMgtUtil.triggerTenantDeactivation(tenantId);
-        } catch (StratosException e) {
+        } catch (TenantManagementException e) {
             String msg = "Error in notifying tenant deactivate.";
             log.error(msg, e);
             throw new Exception(msg, e);
@@ -599,7 +598,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
      *
      * @param tenantDomain The domain name of the tenant that needs to be deleted
      */
-    public void deleteTenant(String tenantDomain) throws StratosException, org.wso2.carbon.user.api.UserStoreException {
+    public void deleteTenant(String tenantDomain) throws TenantManagementException, org.wso2.carbon.user.api.UserStoreException {
 
         TenantManager tenantManager = TenantMgtServiceComponent.getTenantManager();
         if (tenantManager != null) {
@@ -644,7 +643,7 @@ public class TenantMgtAdminService extends AbstractAdmin {
             } catch (Exception e) {
                 String msg = String.format("Deleted tenant with domain: %s and tenant id: %d from the system.", tenantDomain, tenantId);
                 log.error(msg, e);
-                throw new StratosException(msg, e);
+                throw new TenantManagementException(msg, e);
             }
         }
 
